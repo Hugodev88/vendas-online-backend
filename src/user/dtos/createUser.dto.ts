@@ -1,9 +1,21 @@
-export interface CreateUserDto {
-    name: string,
-    email: string,
-    phone: string,
-    cpf: string,
-    password: string,
+import { IsString } from "class-validator"
+
+export class CreateUserDto {
+
+    @IsString()
+    name: string;
+
+    @IsString()
+    email: string;
+
+    @IsString()
+    phone: string;
+
+    @IsString()
+    cpf: string;
+
+    @IsString()
+    password: string;
 }
 
 
