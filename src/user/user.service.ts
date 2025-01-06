@@ -4,6 +4,7 @@ import { CreateUserDto } from './dtos/createUser.dto';
 import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserType } from './enum/user-type.enum';
 
 @Injectable()
 export class UserService {
@@ -26,7 +27,7 @@ export class UserService {
 
         return this.userRepository.save({
             ...createUserDto,
-            typeUser:1,
+            typeUser: UserType.User,
             password: passwordHash
         })
     }
@@ -56,11 +57,9 @@ export class UserService {
                 id: userId,
             }
         })
-
         if (!user) {
             throw new NotFoundException(`User Not Found`)
         }
-
         return user
     }
 
@@ -74,7 +73,6 @@ export class UserService {
         if (!user) {
             throw new NotFoundException(`Email Not Found`)
         }
-
         return user
     }
 
