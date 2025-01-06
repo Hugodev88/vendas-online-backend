@@ -19,7 +19,7 @@ export class CategoryController {
         return (await this.categoryService.findAllCategories()).map((category) => new ReturnCategoryDto(category))
     }
 
-    // @Roles(UserType.Admin)
+    @Roles(UserType.Admin)
     @UsePipes(ValidationPipe)
     @Post()
     async createCategory(@Body()createCategory: CreateCategoryDto ): Promise<CategoryEntity> {

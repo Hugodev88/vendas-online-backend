@@ -56,7 +56,6 @@ describe('CategoryService', () => {
     expect(category).toEqual(categoryMock)
   });
   
-  
   it('should return error in exception', async () => {
     jest.spyOn(categoryRepository, 'save').mockRejectedValue(new Error())
     expect(service.createCategory(createCategoryMock)).rejects.toThrowError()
