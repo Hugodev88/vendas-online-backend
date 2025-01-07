@@ -8,6 +8,7 @@ import { CategoryModule } from '../category/category.module';  // Importe o Cate
 @Module({
   imports: [TypeOrmModule.forFeature([ProductEntity]), CategoryModule],  // Agora você importa o CategoryModule
   providers: [ProductService],
-  controllers: [ProductController]
+  controllers: [ProductController],
+  exports: [ProductService], 
 })
 export class ProductModule {}
