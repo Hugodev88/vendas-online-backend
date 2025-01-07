@@ -123,6 +123,4 @@ describe('CartProductService', () => {
     expect(spy.mock.calls[0][0].amount).toEqual(updateCartMock.amount)
   });
 
-
-
 });
