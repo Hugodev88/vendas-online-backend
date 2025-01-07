@@ -9,6 +9,8 @@ import { cartMock } from '../__mocks__/cart.mock';
 import { userEntityMock } from '../../user/__mocks__/user.mock';
 import { NotFoundException } from '@nestjs/common';
 import { insertCartMock } from '../__mocks__/insert-cart.mock';
+import { productMock } from '../../product/__mocks__/product.mock';
+import { updateCartMock } from '../__mocks__/update-cart.mock';
 
 describe('CartService', () => {
   let service: CartService;
@@ -113,7 +115,36 @@ describe('CartService', () => {
     expect(spy.mock.calls.length).toEqual(0);
     expect(spyCartProductService.mock.calls.length).toEqual(1);
   });
-
-
+  
+  it('should return delete in delete product cart', async () => {
+    const spy = jest.spyOn(cartProductService, 'deleteProductCart')
+    const deleteResult = await service.deleteProductCart(productMock.id, userEntityMock.id);
+    expect(deleteResult).toEqual(returnDeleteMock);
+    expect(spy.mock.calls.length).toEqual(1);
+  });
+  
+  it('should return not found exception in cart not exist', async () => {
+    jest.spyOn(cartRepository, 'findOne').mockResolvedValue(undefined)
+    const spy = jest.spyOn(cartProductService, 'deleteProductCart')
+    expect(service.deleteProductCart(productMock.id, userEntityMock.id)).rejects.toThrowError(NotFoundException);
+    expect(spy.mock.calls.length).toEqual(0);
+  });
+  
+  it('should return cart in updateProductInCart', async () => {
+    const spyCartProductService = jest.spyOn(cartProductService, 'updateProductInCart')
+    const spySave = jest.spyOn(cartRepository, 'save')
+    const cart = await service.updateProductInCart(updateCartMock, userEntityMock.id);
+    expect(cart).toEqual(cartMock);
+    expect(spyCartProductService.mock.calls.length).toEqual(1);
+    expect(spySave.mock.calls.length).toEqual(0);
+  });
+  
+  it('should return cart in create cart', async () => {
+    jest.spyOn(cartRepository, 'findOne').mockResolvedValue(undefined)
+    const spySave = jest.spyOn(cartRepository, 'save')
+    const cart = await service.updateProductInCart(updateCartMock, userEntityMock.id);
+    expect(cart).toEqual(cartMock);
+    expect(spySave.mock.calls.length).toEqual(1);
+  });
 
 });
