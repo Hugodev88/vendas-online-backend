@@ -4,7 +4,7 @@ import { CartEntity } from "../entities/cart.entity";
 export const cartMock: CartEntity = {
     active: true,
     createdAt: new Date(),
-    id: 123,
+    id: 1,
     updatedAt: new Date(),
     userId: userEntityMock.id,
 };
