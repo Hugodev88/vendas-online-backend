@@ -62,4 +62,5 @@ export class CartProductService {
             amount: updateCart.amount  
         })
     }
+    
 }
