@@ -5,7 +5,7 @@ import { CategoryService } from '../category.service';
 import { categoryMock } from '../__mocks__/category.mock';
 import { createCategoryMock } from '../__mocks__/create-category.mock';
 
-describe('CartService', () => {
+describe('CategoryService', () => {
   let controller: CategoryController;
   let categoryService: CategoryService;
 

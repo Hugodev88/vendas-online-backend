@@ -22,7 +22,7 @@ export class UserController {
 
     @Roles(UserType.Admin)
     @Get()
-    async getAllUsers(): Promise<ReturnUserDto[]>{
+    async getAllUser(): Promise<ReturnUserDto[]>{
         return (await this.userService.getAllUser()).map((UserEntity) => new ReturnUserDto(UserEntity))
     }
 

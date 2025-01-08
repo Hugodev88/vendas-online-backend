@@ -6,7 +6,7 @@ import { productMock } from '../__mocks__/product.mock';
 import { createProductMock } from '../__mocks__/create-product.mock';
 import { updateProductMock } from '../__mocks__/update-product.mock';
 
-describe('CartService', () => {
+describe('ProductService', () => {
   let controller: ProductController;
   let productService: ProductService;
 
