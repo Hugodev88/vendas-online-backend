@@ -10,10 +10,10 @@ export class OrderController {
         private readonly orderService: OrderService,
     ) {}
 
-    @Post('/cart/:cartId')
+    @Post()
     @UsePipes(ValidationPipe)
-    async createOrder (@Body() createOrder:CreateOrderDto, @Param(`cartId`) cartId: number, @UserId() userId: number){
-        return this.orderService.createOrder(createOrder, cartId, userId)
+    async createOrder(@Body() createOrder:CreateOrderDto, @UserId() userId: number){
+        return this.orderService.createOrder(createOrder, userId)
     }
 
     

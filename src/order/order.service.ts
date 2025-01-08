@@ -8,6 +8,9 @@ import { PaymentEntity } from '../payment/entities/payment.entity';
 import { CartService } from 'src/cart/cart.service';
 import { OrderProductService } from 'src/order-product/order-product.service';
 import { ProductService } from 'src/product/product.service';
+import { OrderProductEntity } from 'src/order-product/entities/order-product.entity';
+import { CartEntity } from 'src/cart/entities/cart.entity';
+import { ProductEntity } from 'src/product/entities/product.entity';
 
 @Injectable()
 export class OrderService {
@@ -21,21 +24,22 @@ export class OrderService {
         private readonly productService: ProductService,
     ) {}
 
-    async createOrder(createOrder: CreateOrderDto, cartId: number, userId: number): Promise<OrderEntity>{
-        const payment: PaymentEntity = await this.paymentService.createPayment(createOrder)
+    async saveOrder(createOrder: CreateOrderDto, userId: number, payment: PaymentEntity): Promise<OrderEntity>{
+        return this.orderRepository.save({addressId: createOrder.addressId, date: new Date(), paymentId: payment.id, userId})
+    }   
 
-        const order = await this.orderRepository.save({
-            addressId: createOrder.addressId,
-            date: new Date(),
-            paymentId: payment.id,
-            userId,
-        })
+    async createOrderProductUsingCart(cart: CartEntity, orderId: number, products: ProductEntity[]): Promise<OrderProductEntity[]>{
+        return Promise.all(cart.cartProduct?.map((cartProduct) => this.orderProductService.createOrderProduct(cartProduct.productId, orderId, products.find((product) => product.id === cartProduct.productId)?.price || 0, cartProduct.amount)))
+    }
 
+    async createOrder(createOrder: CreateOrderDto, userId: number): Promise<OrderEntity>{
         const cart = await this.cartService.findCartByUserId(userId, true)
-
         const products = await this.productService.findAll(cart.cartProduct?.map((cartProduct) => cartProduct.productId))
+        const payment: PaymentEntity = await this.paymentService.createPayment(createOrder, products, cart)
+        const order = await this.saveOrder(createOrder, userId, payment)
 
-        await Promise.all(cart.cartProduct?.map((cartProduct) => this.orderProductService.createOrderProduct(cartProduct.productId, order.id, products.find((product) => product.id === cartProduct.productId)?.price, cartProduct.amount)))
+        await this.createOrderProductUsingCart(cart, order.id, products)
+        // await this.cartService.clearCart(userId)
 
         return order
 
