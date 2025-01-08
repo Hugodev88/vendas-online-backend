@@ -12,8 +12,8 @@ export class OrderController {
 
     @Post('/cart/:cartId')
     @UsePipes(ValidationPipe)
-    async createOrder (@Body() createOrderDto:CreateOrderDto, @Param(`cartId`) cartId: number, @UserId() userId: number){
-        return this.orderService.createOrder(createOrderDto, cartId, userId)
+    async createOrder (@Body() createOrder:CreateOrderDto, @Param(`cartId`) cartId: number, @UserId() userId: number){
+        return this.orderService.createOrder(createOrder, cartId, userId)
     }
 
     
