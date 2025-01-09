@@ -1,6 +1,6 @@
 import { PaymentStatusEntity } from "../../payment-status/entities/payment-status.entity";
 import { OrderEntity } from "../../order/entities/order.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance, UpdateDateColumn } from "typeorm"
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance, UpdateDateColumn } from "typeorm"
 
 @Entity ({name: 'payment'})
 @TableInheritance({column: {type: "varchar", name: "type"}})
