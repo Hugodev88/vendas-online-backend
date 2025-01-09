@@ -4,7 +4,7 @@ import { CityController } from '../city.controller';
 import { cityMock } from '../__mocks__/city.mock';
 import { stateMock } from '../../state/__mocks__/state.mock';
 
-describe('CityService', () => {
+describe('CityController', () => {
   let controller: CityController;
   let cityService: CityService;
 

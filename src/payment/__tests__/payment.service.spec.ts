@@ -4,7 +4,10 @@ import { Repository } from 'typeorm';
 import { PaymentEntity } from '../entities/payment.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { paymentMock } from '../__mocks__/payment.mock';
-import { createOrderCreditCardMock, createOrderPixMock } from '../../order/__mocks__/create-order.mock';
+import {
+  createOrderCreditCardMock,
+  createOrderPixMock,
+} from '../../order/__mocks__/create-order.mock';
 import { productMock } from '../../product/__mocks__/product.mock';
 import { cartMock } from '../../cart/__mocks__/cart.mock';
 import { paymentPixMock } from '../__mocks__/payment-pix.mock';
@@ -45,55 +48,86 @@ describe('PaymentService', () => {
 
   it('should save payment pix in db', async () => {
     const spy = jest.spyOn(paymentRepository, 'save');
-    const payment = await service.createPayment(createOrderPixMock, [productMock], cartMock);
-    
-    const savePayment: PaymentPixEntity = spy.mock.calls[0][0] as PaymentPixEntity;
-    
+    const payment = await service.createPayment(
+      createOrderPixMock,
+      [productMock],
+      cartMock,
+    );
+
+    const savePayment: PaymentPixEntity = spy.mock
+      .calls[0][0] as PaymentPixEntity;
+
     expect(payment).toEqual(paymentMock);
     expect(savePayment.code).toEqual(paymentPixMock.code);
     expect(savePayment.datePayment).toEqual(paymentPixMock.datePayment);
   });
-  
+
   it('should save payment credit card in db', async () => {
     const spy = jest.spyOn(paymentRepository, 'save');
-    const payment = await service.createPayment(createOrderCreditCardMock, [productMock], cartMock);
-    
-    const savePayment: PaymentCreditCardEntity = spy.mock.calls[0][0] as PaymentCreditCardEntity;
-    
+    const payment = await service.createPayment(
+      createOrderCreditCardMock,
+      [productMock],
+      cartMock,
+    );
+
+    const savePayment: PaymentCreditCardEntity = spy.mock
+      .calls[0][0] as PaymentCreditCardEntity;
+
     expect(payment).toEqual(paymentMock);
-    expect(savePayment.amountPayments).toEqual(paymentCreditCardMock.amountPayments);
+    expect(savePayment.amountPayments).toEqual(
+      paymentCreditCardMock.amountPayments,
+    );
   });
-  
+
   it('should return exception in not send data', async () => {
-    expect(service.createPayment({addressId: createOrderCreditCardMock.addressId}, [productMock], cartMock)).rejects.toThrowError(BadRequestException)
+    expect(
+      service.createPayment(
+        { addressId: createOrderCreditCardMock.addressId },
+        [productMock],
+        cartMock,
+      ),
+    ).rejects.toThrowError(BadRequestException);
   });
-  
+
   it('should return final price 0 in cart product undefined', async () => {
     const spy = jest.spyOn(paymentRepository, 'save');
-    await service.createPayment(createOrderCreditCardMock, [productMock], cartMock);
-    const savePayment: PaymentCreditCardEntity = spy.mock.calls[0][0] as PaymentCreditCardEntity; 
+    await service.createPayment(
+      createOrderCreditCardMock,
+      [productMock],
+      cartMock,
+    );
+    const savePayment: PaymentCreditCardEntity = spy.mock
+      .calls[0][0] as PaymentCreditCardEntity;
     expect(savePayment.finalPrice).toEqual(0);
   });
-  
+
   it('should return final price send cart product', async () => {
     const spy = jest.spyOn(paymentRepository, 'save');
     await service.createPayment(createOrderCreditCardMock, [productMock], {
       ...cartMock,
       cartProduct: [cartProductMock],
     });
-    const savePayment: PaymentCreditCardEntity = spy.mock.calls[0][0] as PaymentCreditCardEntity; 
+    const savePayment: PaymentCreditCardEntity = spy.mock
+      .calls[0][0] as PaymentCreditCardEntity;
     expect(savePayment.finalPrice).toEqual(50.3);
   });
-  
+
   it('should return all data in save payment', async () => {
     const spy = jest.spyOn(paymentRepository, 'save');
     await service.createPayment(createOrderCreditCardMock, [productMock], {
       ...cartMock,
       cartProduct: [cartProductMock],
     });
-    const savePayment: PaymentCreditCardEntity = spy.mock.calls[0][0] as PaymentCreditCardEntity;
-    const paymentCreditCard: PaymentCreditCardEntity = new PaymentCreditCardEntity(PaymentType.Done,50.3,0,50.3,createOrderCreditCardMock)
+    const savePayment: PaymentCreditCardEntity = spy.mock
+      .calls[0][0] as PaymentCreditCardEntity;
+    const paymentCreditCard: PaymentCreditCardEntity =
+      new PaymentCreditCardEntity(
+        PaymentType.Done,
+        50.3,
+        0,
+        50.3,
+        createOrderCreditCardMock,
+      );
     expect(savePayment).toEqual(paymentCreditCard);
   });
-
 });

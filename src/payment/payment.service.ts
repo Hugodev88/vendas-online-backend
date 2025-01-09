@@ -22,17 +22,20 @@ export class PaymentService {
       return 0;
     }
 
-    return Number(cart.cartProduct
-      .map((cartProduct: CartProductEntity) => {
-        const product = products.find(
-          (product) => product.id === cartProduct.productId,
-        );
-        if (product) {
-          return cartProduct.amount * product.price;
-        }
-        return 0;
-      })
-      .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2))
+    return Number(
+      cart.cartProduct
+        .map((cartProduct: CartProductEntity) => {
+          const product = products.find(
+            (product) => product.id === cartProduct.productId,
+          );
+          if (product) {
+            return cartProduct.amount * product.price;
+          }
+          return 0;
+        })
+        .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+        .toFixed(2),
+    );
   }
 
   async createPayment(
