@@ -15,7 +15,7 @@ describe('StateService', () => {
           useValue: {
             getAllState: jest.fn().mockResolvedValue([stateMock]),
           },
-        }
+        },
       ],
       controllers: [StateController],
     }).compile();
@@ -28,10 +28,9 @@ describe('StateService', () => {
     expect(controller).toBeDefined();
     expect(stateService).toBeDefined();
   });
-  
+
   it('should return states in createProduct', async () => {
     const states = await controller.getAllState();
     expect(states).toEqual([stateMock]);
   });
-  
 });

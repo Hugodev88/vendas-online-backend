@@ -22,7 +22,7 @@ describe('CartService', () => {
             clearCart: jest.fn().mockResolvedValue(returnDeleteMock),
             updateProductInCart: jest.fn().mockResolvedValue(cartMock),
           },
-        }
+        },
       ],
       controllers: [CartController],
     }).compile();
@@ -49,17 +49,19 @@ describe('CartService', () => {
       id: cartMock.id,
     });
   });
-  
+
   it('should return deleteResult in clearCart', async () => {
     const cart = await controller.clearCart(userEntityMock.id);
     expect(cart).toEqual(returnDeleteMock);
   });
-  
+
   it('should return cartEntity in updateProductInCart', async () => {
-    const cart = await controller.updateProductInCart(updateCartMock, userEntityMock.id);
+    const cart = await controller.updateProductInCart(
+      updateCartMock,
+      userEntityMock.id,
+    );
     expect(cart).toEqual({
       id: cartMock.id,
     });
   });
-
 });

@@ -8,65 +8,66 @@ import { UpdateProductDto } from './dtos/updateProduct.dto';
 
 @Injectable()
 export class ProductService {
+  constructor(
+    @InjectRepository(ProductEntity)
+    private readonly productRepository: Repository<ProductEntity>,
+    private readonly categoryService: CategoryService,
+  ) {}
 
-    constructor(
-        @InjectRepository(ProductEntity)
-        private readonly productRepository: Repository<ProductEntity>,
-        private readonly categoryService: CategoryService
-    ) {}
+  async findAll(productId?: number[]): Promise<ProductEntity[]> {
+    let findOptions = {};
 
-    async findAll(productId?: number[]): Promise<ProductEntity[]>{
-
-        let findOptions = {}
-
-        if (productId && productId.length > 0) {
-            findOptions = {
-                where: {
-                    id: In(productId)
-                }
-            }
-        }
-
-        const products = await this.productRepository.find(findOptions)
-
-        if(!products || products.length === 0) {
-            throw new NotFoundException("Not found products")
-        }
-        
-        return products
+    if (productId && productId.length > 0) {
+      findOptions = {
+        where: {
+          id: In(productId),
+        },
+      };
     }
 
-    async createProduct(createProduct: CreateProductDto): Promise<ProductEntity> {
-        await this.categoryService.findCategoryById(createProduct.categoryId)
+    const products = await this.productRepository.find(findOptions);
 
-        return this.productRepository.save({
-            ...createProduct,
-        })
+    if (!products || products.length === 0) {
+      throw new NotFoundException('Not found products');
     }
 
-    async findProductById(productId: number): Promise<ProductEntity> {
-        const product = await this.productRepository.findOne({where: {id: productId}})
+    return products;
+  }
 
-        if(!product) {
-            throw new NotFoundException(`Product id: ${productId} not found`)
-        }
+  async createProduct(createProduct: CreateProductDto): Promise<ProductEntity> {
+    await this.categoryService.findCategoryById(createProduct.categoryId);
 
-        return product
+    return this.productRepository.save({
+      ...createProduct,
+    });
+  }
+
+  async findProductById(productId: number): Promise<ProductEntity> {
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product id: ${productId} not found`);
     }
 
-    async deleteProduct(productId: number): Promise<DeleteResult> {
-        await this.findProductById(productId)
-        return this.productRepository.delete({id: productId})
-    }
+    return product;
+  }
 
-    async updateProduct(updateproduct: UpdateProductDto, productId: number): Promise<ProductEntity> {
-        const product = await this.findProductById(productId)
+  async deleteProduct(productId: number): Promise<DeleteResult> {
+    await this.findProductById(productId);
+    return this.productRepository.delete({ id: productId });
+  }
 
-        return this.productRepository.save({
-            ...product, 
-            ...updateproduct
-        })
-    }
+  async updateProduct(
+    updateproduct: UpdateProductDto,
+    productId: number,
+  ): Promise<ProductEntity> {
+    const product = await this.findProductById(productId);
 
-
+    return this.productRepository.save({
+      ...product,
+      ...updateproduct,
+    });
+  }
 }

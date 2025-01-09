@@ -26,13 +26,12 @@ describe('AuthService', () => {
           useValue: {
             sign: () => jwtMock,
           },
-        }
+        },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     userService = module.get<UserService>(UserService);
-
   });
 
   it('should be defined', () => {
@@ -41,25 +40,26 @@ describe('AuthService', () => {
   });
 
   it('should return user if password and email valid', async () => {
-    const user = await service.login(loginUserMock)
+    const user = await service.login(loginUserMock);
     expect(user).toEqual({
       accessToken: jwtMock,
       user: new ReturnUserDto(userEntityMock),
-    })
+    });
   });
 
   it('should return user if password invalid and email valid', async () => {
-    expect(service.login({...loginUserMock, password: "3123"})).rejects.toThrowError();
+    expect(
+      service.login({ ...loginUserMock, password: '3123' }),
+    ).rejects.toThrowError();
   });
 
   it('should return user if email not exist', async () => {
-    jest.spyOn(userService, 'findUserByEmail').mockResolvedValue(undefined)
+    jest.spyOn(userService, 'findUserByEmail').mockResolvedValue(undefined);
     expect(service.login(loginUserMock)).rejects.toThrowError();
   });
 
   it('should return error in UserService', async () => {
-    jest.spyOn(userService, 'findUserByEmail').mockRejectedValue(new Error())
+    jest.spyOn(userService, 'findUserByEmail').mockRejectedValue(new Error());
     expect(service.login(loginUserMock)).rejects.toThrowError();
   });
-
 });

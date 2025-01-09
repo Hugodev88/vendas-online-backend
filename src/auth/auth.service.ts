@@ -10,24 +10,27 @@ import { validatePassword } from '../utils/password';
 
 @Injectable()
 export class AuthService {
+  constructor(
+    private readonly userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
-    constructor(
-        private readonly userService: UserService,
-        private jwtService: JwtService,
-    ){}
+  async login(loginDto: LoginDto): Promise<ReturnLoginDto> {
+    const user: UserEntity | undefined = await this.userService
+      .findUserByEmail(loginDto.email)
+      .catch(() => undefined);
 
-    async login(loginDto: LoginDto): Promise<ReturnLoginDto>{
-        const user: UserEntity | undefined = await this.userService.findUserByEmail(loginDto.email).catch(() => undefined)
+    const isMatch = await validatePassword(
+      loginDto.password,
+      user?.password || '',
+    );
 
-        const isMatch = await validatePassword(loginDto.password, user?.password || '')
-
-        if(!user || !isMatch) {
-            throw new NotFoundException("Email or password invalid");
-        }
-        return {
-            accessToken: this.jwtService.sign({...new LoginPayloadDto(user)}),
-            user: new ReturnUserDto(user),
-        }
+    if (!user || !isMatch) {
+      throw new NotFoundException('Email or password invalid');
     }
-
+    return {
+      accessToken: this.jwtService.sign({ ...new LoginPayloadDto(user) }),
+      user: new ReturnUserDto(user),
+    };
+  }
 }

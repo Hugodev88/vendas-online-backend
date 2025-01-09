@@ -46,7 +46,9 @@ describe('AddressService', () => {
     userService = module.get<UserService>(UserService);
     cityService = module.get<CityService>(CityService);
 
-    addressRepository = module.get<Repository<AddressEntity>>(getRepositoryToken(AddressEntity));
+    addressRepository = module.get<Repository<AddressEntity>>(
+      getRepositoryToken(AddressEntity),
+    );
   });
 
   it('should be defined', () => {
@@ -57,18 +59,25 @@ describe('AddressService', () => {
   });
 
   it('should return address after save', async () => {
-    const address = await service.createAddress(createAddressMock, userEntityMock.id);
+    const address = await service.createAddress(
+      createAddressMock,
+      userEntityMock.id,
+    );
     expect(address).toEqual(addressMock);
   });
 
   it('should return error if exception in userService', async () => {
-    jest.spyOn(userService, 'findUserById').mockRejectedValueOnce(new Error())
-    expect(service.createAddress(createAddressMock, userEntityMock.id)).rejects.toThrowError();
+    jest.spyOn(userService, 'findUserById').mockRejectedValueOnce(new Error());
+    expect(
+      service.createAddress(createAddressMock, userEntityMock.id),
+    ).rejects.toThrowError();
   });
 
   it('should return error if exception in cityService', async () => {
-    jest.spyOn(cityService, 'findCityById').mockRejectedValueOnce(new Error())
-    expect(service.createAddress(createAddressMock, userEntityMock.id)).rejects.toThrowError();
+    jest.spyOn(cityService, 'findCityById').mockRejectedValueOnce(new Error());
+    expect(
+      service.createAddress(createAddressMock, userEntityMock.id),
+    ).rejects.toThrowError();
   });
 
   it('should return addresses to user', async () => {
@@ -77,8 +86,9 @@ describe('AddressService', () => {
   });
 
   it('should return not found if not address registered', async () => {
-    jest.spyOn(addressRepository, 'find').mockResolvedValue(undefined)
-    expect(service.findAddressByUserId(userEntityMock.id)).rejects.toThrowError();
+    jest.spyOn(addressRepository, 'find').mockResolvedValue(undefined);
+    expect(
+      service.findAddressByUserId(userEntityMock.id),
+    ).rejects.toThrowError();
   });
-
 });

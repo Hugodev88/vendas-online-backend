@@ -22,7 +22,7 @@ describe('CacheService', () => {
     }).compile();
 
     service = module.get<CacheService>(CacheService);
-    cache = module.get(CACHE_MANAGER)
+    cache = module.get(CACHE_MANAGER);
   });
 
   it('should be defined', () => {
@@ -30,17 +30,16 @@ describe('CacheService', () => {
   });
 
   it('should return data in cache', async () => {
-    const user = await service.getCache('key', () => null)
+    const user = await service.getCache('key', () => null);
     expect(user).toEqual(userEntityMock);
   });
 
   it('should return data in function', async () => {
-    const result = { test: 'tes'}
-    jest.spyOn(cache, 'get').mockResolvedValue(undefined)
+    const result = { test: 'tes' };
+    jest.spyOn(cache, 'get').mockResolvedValue(undefined);
 
-    const user = await service.getCache('key', () => Promise.resolve(result))
+    const user = await service.getCache('key', () => Promise.resolve(result));
 
     expect(user).toEqual(result);
   });
-
 });

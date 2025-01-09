@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { returnDeleteMock } from '../../__mocks__/return-delete.mock';
 import { CategoryController } from '../category.controller';
 import { CategoryService } from '../category.service';
 import { categoryMock } from '../__mocks__/category.mock';
@@ -18,7 +17,7 @@ describe('CategoryService', () => {
             createCategory: jest.fn().mockResolvedValue(categoryMock),
             findAllCategories: jest.fn().mockResolvedValue([categoryMock]),
           },
-        }
+        },
       ],
       controllers: [CategoryController],
     }).compile();
@@ -36,12 +35,14 @@ describe('CategoryService', () => {
     const category = await controller.createCategory(createCategoryMock);
     expect(category).toEqual(categoryMock);
   });
-  
+
   it('should return categoryEntity in findAllCategories', async () => {
     const category = await controller.findAllCategories();
-    expect(category).toEqual([{
-      id: categoryMock.id,
-      name: categoryMock.name,
-    }]);
+    expect(category).toEqual([
+      {
+        id: categoryMock.id,
+        name: categoryMock.name,
+      },
+    ]);
   });
 });

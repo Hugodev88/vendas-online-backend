@@ -1,3 +1,3 @@
 export enum PaymentType {
-    Done = 1,
+  Done = 1,
 }

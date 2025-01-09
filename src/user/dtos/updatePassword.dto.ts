@@ -1,4 +1,4 @@
 export class UpdatePasswordDto {
-    newPassword: string;
-    lastPassword: string;
+  newPassword: string;
+  lastPassword: string;
 }

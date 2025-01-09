@@ -19,7 +19,7 @@ describe('AddressController', () => {
             createAddress: jest.fn().mockResolvedValue(addressMock),
             findAddressByUserId: jest.fn().mockResolvedValue([addressMock]),
           },
-        }
+        },
       ],
       controllers: [AddressController],
     }).compile();
@@ -34,13 +34,15 @@ describe('AddressController', () => {
   });
 
   it('should return addressEntity in createAddress', async () => {
-    const address = await controller.createAddress(createAddressMock, userEntityMock.id);
+    const address = await controller.createAddress(
+      createAddressMock,
+      userEntityMock.id,
+    );
     expect(address).toEqual(addressMock);
   });
-  
+
   it('should return addressEntity in findAddressByUserId', async () => {
     const addresses = await controller.findAddressByUserId(userEntityMock.id);
     expect(addresses).toEqual([new ReturnAddressDto(addressMock)]);
   });
-
 });

@@ -16,7 +16,7 @@ describe('AuthController', () => {
           useValue: {
             login: jest.fn().mockResolvedValue(ReturnLoginMock),
           },
-        }
+        },
       ],
       controllers: [AuthController],
     }).compile();
@@ -29,10 +29,9 @@ describe('AuthController', () => {
     expect(controller).toBeDefined();
     expect(authService).toBeDefined();
   });
-  
+
   it('should return user login', async () => {
-    const userLogin = await controller.login(loginUserMock)
+    const userLogin = await controller.login(loginUserMock);
     expect(userLogin).toEqual(ReturnLoginMock);
   });
-
 });

@@ -21,7 +21,7 @@ describe('ProductService', () => {
             deleteProduct: jest.fn().mockResolvedValue(returnDeleteMock),
             updateProduct: jest.fn().mockResolvedValue(productMock),
           },
-        }
+        },
       ],
       controllers: [ProductController],
     }).compile();
@@ -37,26 +37,31 @@ describe('ProductService', () => {
 
   it('should return productEntity in findAll', async () => {
     const products = await controller.findAll();
-    expect(products).toEqual([{
-      id: productMock.id,
-      name: productMock.name,
-      price: productMock.price,
-      image: productMock.image,
-    }]);
+    expect(products).toEqual([
+      {
+        id: productMock.id,
+        name: productMock.name,
+        price: productMock.price,
+        image: productMock.image,
+      },
+    ]);
   });
-  
+
   it('should return productEntity in createProduct', async () => {
     const product = await controller.createProduct(createProductMock);
     expect(product).toEqual(productMock);
   });
-  
+
   it('should return DeleteResult in deleteProduct', async () => {
     const product = await controller.deleteProduct(productMock.id);
     expect(product).toEqual(returnDeleteMock);
   });
 
   it('should return productEntity in updateProduct', async () => {
-    const product = await controller.updateProduct(updateProductMock, productMock.id);
+    const product = await controller.updateProduct(
+      updateProductMock,
+      productMock.id,
+    );
     expect(product).toEqual(productMock);
   });
 });

@@ -4,7 +4,6 @@ import { CityController } from '../city.controller';
 import { cityMock } from '../__mocks__/city.mock';
 import { stateMock } from '../../state/__mocks__/state.mock';
 
-
 describe('CityService', () => {
   let controller: CityController;
   let cityService: CityService;
@@ -17,7 +16,7 @@ describe('CityService', () => {
           useValue: {
             getAllCitiesByStateId: jest.fn().mockResolvedValue([cityMock]),
           },
-        }
+        },
       ],
       controllers: [CityController],
     }).compile();
@@ -35,5 +34,4 @@ describe('CityService', () => {
     const cities = await controller.getAllCitiesByStateId(stateMock.id);
     expect(cities).toEqual([cityMock]);
   });
-  
 });

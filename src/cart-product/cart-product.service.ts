@@ -9,58 +9,79 @@ import { UpdateCartDto } from '../cart/dtos/update-cart.dto';
 
 @Injectable()
 export class CartProductService {
+  constructor(
+    @InjectRepository(CartProductEntity)
+    private readonly cartProductRepository: Repository<CartProductEntity>,
+    private readonly productService: ProductService,
+  ) {}
 
-    constructor (
-        @InjectRepository(CartProductEntity)
-        private readonly cartProductRepository: Repository<CartProductEntity>,
-        private readonly productService: ProductService,
-    ) {}
+  async verifyProductInCart(
+    productId: number,
+    cartId: number,
+  ): Promise<CartProductEntity> {
+    const cartProduct = await this.cartProductRepository.findOne({
+      where: { productId, cartId },
+    });
 
-    async verifyProductInCart(productId: number, cartId: number): Promise<CartProductEntity> {
-        const cartProduct = await this.cartProductRepository.findOne({ where: {productId, cartId } });
-
-        if(!cartProduct) {
-            throw new NotFoundException('Product not found in cart');
-        }
-
-        return cartProduct
+    if (!cartProduct) {
+      throw new NotFoundException('Product not found in cart');
     }
 
-    async createProductInCart(insertCart: InsertCartDto, cartId: number): Promise<CartProductEntity> {
-        return this.cartProductRepository.save({
-            ...insertCart,
-            cartId
-        })
+    return cartProduct;
+  }
+
+  async createProductInCart(
+    insertCart: InsertCartDto,
+    cartId: number,
+  ): Promise<CartProductEntity> {
+    return this.cartProductRepository.save({
+      ...insertCart,
+      cartId,
+    });
+  }
+
+  async insertProductInCart(
+    insertCart: InsertCartDto,
+    cart: CartEntity,
+  ): Promise<CartProductEntity> {
+    await this.productService.findProductById(insertCart.productId);
+
+    const cartProduct = await this.verifyProductInCart(
+      insertCart.productId,
+      cart.id,
+    ).catch(() => undefined);
+
+    if (!cartProduct) {
+      return this.createProductInCart(insertCart, cart.id);
     }
 
-    async insertProductInCart(insertCart: InsertCartDto, cart: CartEntity): Promise<CartProductEntity> {
-        await this.productService.findProductById(insertCart.productId);
+    return this.cartProductRepository.save({
+      ...cartProduct,
+      amount: cartProduct.amount + insertCart.amount,
+    });
+  }
 
-        const cartProduct = await this.verifyProductInCart(insertCart.productId, cart.id).catch(() =>  undefined);
+  async deleteProductCart(
+    productId: number,
+    cartId: number,
+  ): Promise<DeleteResult> {
+    return this.cartProductRepository.delete({ productId, cartId });
+  }
 
-        if(!cartProduct) {
-            return this.createProductInCart(insertCart, cart.id)
-        }
+  async updateProductInCart(
+    updateCart: UpdateCartDto,
+    cart: CartEntity,
+  ): Promise<CartProductEntity> {
+    await this.productService.findProductById(updateCart.productId);
 
-        return this.cartProductRepository.save({
-            ...cartProduct,
-            amount: cartProduct.amount + insertCart.amount    
-        })
-    }
+    const cartProduct = await this.verifyProductInCart(
+      updateCart.productId,
+      cart.id,
+    );
 
-    async deleteProductCart(productId: number, cartId: number): Promise<DeleteResult> {
-        return this.cartProductRepository.delete({ productId, cartId });
-    }
-
-    async updateProductInCart(updateCart: UpdateCartDto, cart: CartEntity): Promise<CartProductEntity> {
-        await this.productService.findProductById(updateCart.productId);
-
-        const cartProduct = await this.verifyProductInCart(updateCart.productId, cart.id);
-
-        return this.cartProductRepository.save({
-            ...cartProduct,
-            amount: updateCart.amount  
-        })
-    }
-    
+    return this.cartProductRepository.save({
+      ...cartProduct,
+      amount: updateCart.amount,
+    });
+  }
 }
