@@ -4,6 +4,7 @@ import { UserService } from '../user.service';
 import { createUserMock } from '../__mocks__/createUser.mock';
 import { userEntityMock } from '../__mocks__/user.mock';
 import { updatePasswordMock } from '../__mocks__/updatePassword.mock';
+import { ReturnUserDto } from '../dtos/returnUser.dto';
 
 describe('UserService', () => {
   let controller: UserController;
@@ -17,6 +18,7 @@ describe('UserService', () => {
           useValue: {
             createUser: jest.fn().mockResolvedValue(userEntityMock),
             getAllUser: jest.fn().mockResolvedValue([userEntityMock]),
+            getInfoUser: jest.fn().mockResolvedValue(userEntityMock),
             getUserByIdUsingRelations: jest
               .fn()
               .mockResolvedValue(userEntityMock),
@@ -71,5 +73,10 @@ describe('UserService', () => {
       userEntityMock.id,
     );
     expect(user).toEqual(userEntityMock);
+  });
+
+  it('should return user in getInfoUser', async () => {
+    const user = await controller.getInfoUser(userEntityMock.id);
+    expect(user).toEqual(new ReturnUserDto(userEntityMock));
   });
 });
