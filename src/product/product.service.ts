@@ -12,9 +12,9 @@ export class ProductService {
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
     private readonly categoryService: CategoryService,
-  ) {}
+  ) { }
 
-  async findAll(productId?: number[]): Promise<ProductEntity[]> {
+  async findAll(productId?: number[], isFindRelations?: boolean): Promise<ProductEntity[]> {
     let findOptions = {};
 
     if (productId && productId.length > 0) {
@@ -23,6 +23,15 @@ export class ProductService {
           id: In(productId),
         },
       };
+    }
+
+    if (isFindRelations) {
+      findOptions = {
+        ...findOptions,
+        relations: {
+          category: true
+        }
+      }
     }
 
     const products = await this.productRepository.find(findOptions);
