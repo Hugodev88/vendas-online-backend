@@ -75,10 +75,11 @@ export class OrderService {
     return order;
   }
 
-  async findOrdersByUserId(userId: number) {
+  async findOrdersByUserId(userId?: number, orderId?: number) {
     const orders = await this.orderRepository.find({
       where: {
         userId,
+        id: orderId,
       },
       relations: {
         address: true,
@@ -88,6 +89,7 @@ export class OrderService {
         payment: {
           paymentStatus: true,
         },
+        user: !!orderId,
       },
     });
 
