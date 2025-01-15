@@ -103,7 +103,7 @@ describe('OrderService', () => {
         },
         payment: {
           paymentStatus: true,
-        },
+        }
       },
     });
   });
