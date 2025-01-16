@@ -3,6 +3,8 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { AxiosError, AxiosResponse } from 'axios';
 import { CityService } from 'src/city/city.service';
 import { ReturnCepExternalDto } from './dtos/return-cep-external.dto';
+import { ReturnCepDto } from './dtos/return-cep.dto';
+import { CityEntity } from 'src/city/entities/city.entity';
 
 
 @Injectable()
@@ -14,7 +16,7 @@ export class CorreiosService {
         private readonly cityService: CityService,
     ) { }
 
-    async findAddressByCep(cep: string): Promise<ReturnCepExternalDto> {
+    async findAddressByCep(cep: string): Promise<ReturnCepDto> {
         const returnCep = await this.httpService.axiosRef.get<ReturnCepExternalDto>(this.URL_CORREIOS.replace('{CEP}', cep)).then((result) => {
             if (result.data.erro === 'true') {
                 throw new NotFoundException("Cep not found")
@@ -24,9 +26,12 @@ export class CorreiosService {
             throw new BadRequestException(`Error in connection request: ${e.message}`)
         })
 
+        const city: CityEntity | undefined = await this.cityService.findCityByName(
+            returnCep.localidade,
+            returnCep.uf
+        ).catch(() => undefined)
 
-
-        return returnCep
+        return new ReturnCepDto(returnCep, city?.id, city?.state?.id)
     }
 
 }
