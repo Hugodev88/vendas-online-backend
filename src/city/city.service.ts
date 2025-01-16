@@ -11,7 +11,7 @@ export class CityService {
     private readonly cityRepository: Repository<CityEntity>,
 
     private readonly cacheService: CacheService,
-  ) {}
+  ) { }
 
   async getAllCitiesByStateId(stateId: number): Promise<CityEntity[]> {
     const cacheKey = `state_${stateId}`;
@@ -31,6 +31,26 @@ export class CityService {
         id: cityId,
       },
     });
+
+    if (!city) {
+      throw new NotFoundException(`City Not Found`);
+    }
+
+    return city;
+  }
+
+  async findCityByName(nameCity: string, nameState: string): Promise<CityEntity> {
+    const city = await this.cityRepository.findOne({
+      where: {
+        name: nameCity,
+        state: {
+          uf: nameState,
+        }
+      },
+      relations: {
+        state: true
+      }
+    })
 
     if (!city) {
       throw new NotFoundException(`City Not Found`);

@@ -11,4 +11,4 @@ import { CacheModule } from '../cache/cache.module';
   providers: [CityService],
   exports: [CityService],
 })
-export class CityModule {}
+export class CityModule { }
