@@ -23,11 +23,7 @@ export class OrderService {
     private readonly productService: ProductService,
   ) { }
 
-  async saveOrder(
-    createOrder: CreateOrderDto,
-    userId: number,
-    payment: PaymentEntity,
-  ): Promise<OrderEntity> {
+  async saveOrder(createOrder: CreateOrderDto, userId: number, payment: PaymentEntity): Promise<OrderEntity> {
     return this.orderRepository.save({
       addressId: createOrder.addressId,
       date: new Date(),
@@ -36,11 +32,7 @@ export class OrderService {
     });
   }
 
-  async createOrderProductUsingCart(
-    cart: CartEntity,
-    orderId: number,
-    products: ProductEntity[],
-  ): Promise<OrderProductEntity[]> {
+  async createOrderProductUsingCart(cart: CartEntity, orderId: number, products: ProductEntity[]): Promise<OrderProductEntity[]> {
     return Promise.all(
       cart.cartProduct?.map((cartProduct) =>
         this.orderProductService.createOrderProduct(
@@ -54,10 +46,7 @@ export class OrderService {
     );
   }
 
-  async createOrder(
-    createOrder: CreateOrderDto,
-    userId: number,
-  ): Promise<OrderEntity> {
+  async createOrder(createOrder: CreateOrderDto, userId: number): Promise<OrderEntity> {
     const cart = await this.cartService.findCartByUserId(userId, true);
     const products = await this.productService.findAll(
       cart.cartProduct?.map((cartProduct) => cartProduct.productId),
@@ -111,6 +100,19 @@ export class OrderService {
       throw new NotFoundException('Orders not found')
     }
 
-    return orders
+    const ordersProduct = await this.orderProductService.findAmountProductsByOrderId(orders.map((order) => order.id))
+
+    return orders.map((order) => {
+      const orderProduct = ordersProduct.find((currentOrder) => currentOrder.order_id === order.id)
+
+      if (orderProduct) {
+        return {
+          ...order,
+          amountProducts: Number(orderProduct.total)
+        }
+      }
+
+      return order
+    })
   }
 }
