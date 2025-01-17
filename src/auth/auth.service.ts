@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async login(loginDto: LoginDto): Promise<ReturnLoginDto> {
     const user: UserEntity | undefined = await this.userService
