@@ -1,15 +1,15 @@
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import { CityService } from '../city/city.service';
 import { ReturnCepExternalDto } from './dtos/return-cep-external.dto';
 import { ReturnCepDto } from './dtos/return-cep.dto';
 import { CityEntity } from '../city/entities/city.entity';
-import { ResponsePriceCorreiosDto } from './dtos/response-price-correios.dto';
 
 @Injectable()
 export class CorreiosService {
     URL_CORREIOS = process.env.URL_CEP_CORREIOS
+    CEP_COMPANY = process.env.CEP_COMPANY
 
     constructor(
         private readonly httpService: HttpService,
@@ -33,36 +33,6 @@ export class CorreiosService {
         ).catch(() => undefined)
 
         return new ReturnCepDto(returnCep, city?.id, city?.state?.id)
-    }
-
-    async priceDelivery(): Promise<ResponsePriceCorreiosDto> {
-        return new Promise((resolve) => {
-            this.soapClient.CalcPrecoPrazo(
-                {
-                    nCdServico: '40010',
-                    sCepOrigem: '22270010',
-                    sCepDestino: '89010000',
-                    nVlPeso: 2,
-                    nCdFormato: 1,
-                    nVlComprimento: 30,
-                    nVlAltura: 30,
-                    nVlLargura: 30,
-                    nVlDiametro: 30,
-                    nCdEmpresa: '',
-                    sDsSenha: '',
-                    sCdMaoPropria: 'N',
-                    nVlValorDeclarado: 0,
-                    sCdAvisoRecebimento: 'N',
-                },
-                (_, res: ResponsePriceCorreiosDto) => {
-                    if (res) {
-                        resolve(res);
-                    } else {
-                        throw new BadRequestException('Error SOAP');
-                    }
-                },
-            );
-        });
     }
 
 }
